@@ -49,7 +49,7 @@ exports.getAllTours = async (req, res) => {
 
     // More advance filters like {difficulty:  'easy', duration:{ $gte : 3 }}
 
-    // const features = new APIFeatures(Tour.find(), req.query)
+    // const features = new  APIFeatures(Tour.find(), req.query)
     //   .filter()
     //   .sort()
     //   .limitFields()
