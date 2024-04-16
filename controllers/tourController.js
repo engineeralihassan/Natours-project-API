@@ -10,6 +10,7 @@ exports.aliasTopTours = (req, res, next) => {
 
 exports.getAllTours = async (req, res) => {
   try {
+    // const tours = await Tour.find();
     console.log(req.query);
     const queryObj = { ...req.query };
     excludedFeilds = ["limit", "page", "sort", "feilds"];
@@ -17,26 +18,39 @@ exports.getAllTours = async (req, res) => {
     excludedFeilds.forEach((element) => {
       return delete queryObj[element];
     });
-    console.log(queryObj);
+    //console.log(queryObj);
+
     // Tow ways to filter data in mongos
+
     // 1  const tours = await Tour.find({difficulty:'easy',// other properties});  Filter object passing in the find mthod
+
     // 2 chaining where and equal methods
+
     // const tours = await Tour.find()
     //   .where("difficulty")
     //   .equals("easy")
     //   .where("duration")
     //   .equals(5);
 
-    const tours = await Tour.find(queryObj);
+    // Replace the feilds object with mongoos object
+    let queryString = JSON.stringify(queryObj);
+    queryString = queryString.replace(
+      /\b(gte|gt|lte|lt)\b/g,
+      (word) => `$${word}`
+    );
+    console.log(JSON.parse(queryString));
+    // Make Query First
+    const query = Tour.find(JSON.parse(queryString));
     // // EXECUTE QUERY
+    const tours = await query;
+
+    // More advance filters like {difficulty:  'easy', duration:{ $gte : 3 }}
+
     // const features = new APIFeatures(Tour.find(), req.query)
     //   .filter()
     //   .sort()
     //   .limitFields()
     //   .paginate();
-
-    // Get All Tours methods
-    // const tours = await Tour.find();
 
     // SEND RESPONSE
     res.status(200).json({
