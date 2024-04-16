@@ -44,6 +44,15 @@ exports.getAllTours = async (req, res) => {
       query = query.sort("-createdAt");
     }
 
+    // Get Limiting Feilds
+
+    if (req.query.feilds) {
+      let feilds = req.query.feilds.split(",").join(" ");
+      query = query.select(feilds);
+    } else {
+      query = query.select("-__v");
+    }
+
     // // EXECUTE QUERY
     const tours = await query;
 
