@@ -11,36 +11,39 @@ exports.aliasTopTours = (req, res, next) => {
 exports.getAllTours = async (req, res) => {
   try {
     // const tours = await Tour.find();
+
     console.log(req.query);
     const queryObj = { ...req.query };
     excludedFeilds = ["limit", "page", "sort", "feilds"];
+
     // make query object excluded feilds free
+
     excludedFeilds.forEach((element) => {
       return delete queryObj[element];
     });
-    //console.log(queryObj);
 
-    // Tow ways to filter data in mongos
+    // Make filter object acording to the moongoos $ sign  syntax
 
-    // 1  const tours = await Tour.find({difficulty:'easy',// other properties});  Filter object passing in the find mthod
-
-    // 2 chaining where and equal methods
-
-    // const tours = await Tour.find()
-    //   .where("difficulty")
-    //   .equals("easy")
-    //   .where("duration")
-    //   .equals(5);
-
-    // Replace the feilds object with mongoos object
     let queryString = JSON.stringify(queryObj);
     queryString = queryString.replace(
       /\b(gte|gt|lte|lt)\b/g,
       (word) => `$${word}`
     );
-    console.log(JSON.parse(queryString));
+
     // Make Query First
-    const query = Tour.find(JSON.parse(queryString));
+    let query = Tour.find(JSON.parse(queryString));
+
+    // filtering records logic
+
+    if (req.query.sort) {
+      //query = query.sort(req.query.sort);
+
+      // If we want to sort ob more then one condition basis
+      query = query.sort(req.query.sort.split(",").join(" "));
+    } else {
+      query = query.sort("-createdAt");
+    }
+
     // // EXECUTE QUERY
     const tours = await query;
 
