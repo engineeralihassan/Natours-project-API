@@ -2,7 +2,8 @@ const Tour = require("./../models/tourModel");
 //const APIFeatures = require("./../utils/apiFeatures");
 
 exports.aliasTopTours = (req, res, next) => {
-  req.query.limit = "5";
+  console.log("in the middle where");
+  req.query.limit = "4";
   req.query.sort = "-ratingsAverage,price";
   req.query.fields = "name,price,ratingsAverage,summary,difficulty";
   next();
