@@ -204,3 +204,37 @@ exports.getMonthlyPlan = async (req, res) => {
     });
   }
 };
+
+//Ageragtion pipeines methods
+
+exports.getToursStates = async (req, res) => {
+  try {
+    const states = await Tours.aggregate([
+      {
+        $match: { price: { $gte: 150 } },
+      },
+      {
+        $group: {
+          _id: null,
+          avgRating: { $avg: "$ratingsAverage" },
+          avgPrice: { $avg: "$price" },
+          minPrice: { $min: "$price" },
+          maxPrice: { $max: "$price" },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      status: "success",
+      results: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
