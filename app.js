@@ -9,10 +9,7 @@ if (process.env.NODE_ENV === "development") {
 }
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
-app.use((req, res, next) => {
-  console.log("Hello from the middleware 👋");
-  next();
-});
+
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
@@ -20,5 +17,14 @@ app.use((req, res, next) => {
 // 3) ROUTES
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+
+// Handle not found routes for all methods
+
+app.all("*", (req, res, next) => {
+  res.status(404).json({
+    status: "fail",
+    message: `Can't found this url ${req.originalUrl} on our server`,
+  });
+});
 
 module.exports = app;
